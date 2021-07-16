@@ -155,7 +155,7 @@ input[type="text"] {
 }
 
 .copy {
-  border: 2px solid green;
+  border: 2px solid blue;
   border-radius: 3px;
 }
 
@@ -165,6 +165,7 @@ input[type="text"] {
 }
 
 .key-selectors ul {
+  float: left;
   list-style: none;
   display: inline-block;
   padding: 0;

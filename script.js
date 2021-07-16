@@ -328,7 +328,7 @@ function getKey(article){
 
   // checkboxes
   for (let i = 0; i < ul.length; i++){
-    var keyName = ul[i].className.split("-").slice(1).join("-");
+    var keyName = ul[i].classList[0].split("-").slice(1).join("-");
     var j = key.indexOf(keyName);
     newKey[j] = getCheckbox(ul[i]);
   }
@@ -419,9 +419,12 @@ function setKey(article, setKey, markCopy=false){
     var j = key.indexOf(keyName);
     if (j != -1 && isUnchecked(ul[i]) && setKey[j] != keyName){
       var checkbox = ul[i].getElementsByTagName("INPUT");
+      var vals = setKey[j].split(",");
       for (let k = 0; k < checkbox.length; k++){
-        if (setKey[j].includes(checkbox[k].value)){
-          checkbox[k].checked = true;
+        for (let l = 0; l < vals.length; l++){
+          if (checkbox[k].value == vals[l]){
+            checkbox[k].checked = true;
+          }
         }
       }
       if (markCopy) {
