@@ -82,15 +82,15 @@ function addKeys(obj){
     var articleIndex = "<p class='article-index'>Product " + (i + 1) + " of " + max;
     var productInfo = `<div class="name-info product-info">
                         <h2>Name:</h2>
-                        <p id="p-name-`+i+`">` + name[i] + `</p>
+                        <textarea id="p-name-`+i+`">` + name[i] + `</textarea>
                       </div>
                       <div class="sku-info product-info">
                         <h2>SKU:</h2>
-                        <p id="p-sku-`+i+`">` + sku[i] + `</p>
+                        <textarea id="p-sku-`+i+`">` + sku[i] + `</textarea>
                       </div>
                       <div class="product-info desc-info">
                         <h2>Sales Description:</h2>
-                        <p id="p-desc-`+i+`">` + desc[i].split(":_:_")[0] + `</p>
+                        <textarea id="p-desc-`+i+`">` + desc[i].split(":_:_")[0] + `</textarea>
                       </div>
                       <div class="hidden">
                         <p id="p-exId-`+i+`">` + exId[i] + `</p>
@@ -286,13 +286,13 @@ function downloadKeys(obj){
   var newTable = [['External ID', 'Name', 'Internal Reference', 'Brand', 'Product Tags', 'Product Category', 'Sales Description']];
   for (let i = 0; i < articles.length - 1; i++){
     var exId = document.getElementById("p-exId-" + i).innerHTML;
-    var name = document.getElementById("p-name-" + i).innerHTML;
-    var sku = document.getElementById("p-sku-" + i).innerHTML;
+    var name = document.getElementById("p-name-" + i).value;
+    var sku = document.getElementById("p-sku-" + i).value;
     var brand = document.getElementById("p-brand-" + i).innerHTML.split('&amp;').join('&');
     var tags = document.getElementById("p-tags-" + i).innerHTML;
     var cat = document.getElementById("p-cat-" + i).innerHTML;
     var row = [exId, name, sku, brand, tags, cat];
-    var desc = document.getElementById("p-desc-" + i).innerHTML;
+    var desc = document.getElementById("p-desc-" + i).value;
     var key = getKey(articles[i]);
     row.push(desc + key);
     newTable.push(row);
@@ -861,7 +861,7 @@ function generate(obj, add=false){
     if (key[3] == "Submersible"){
       key[23] = "motor-protection";
       key[24] = "handling";
-      key[25] = "0Cable";
+      key[25] = "cable";
     } else if (key[3] == "Surface"){
       key[23] = "suction";
       key.pop();
@@ -870,6 +870,7 @@ function generate(obj, add=false){
       key.push(':');
     }
 
+    // guesses values
     if (true){
       var nameArr = name[i].split(',').join(' ').split(' ');
       for (let j = 0; j < nameArr.length; j++){
@@ -917,6 +918,7 @@ function generate(obj, add=false){
         }
       }
     }
+    
     desc[i] += '\n' + key.join('_:_').split('_:__:_').join('_:_null_:_');
     row.push(desc[i]);
     newTable.push(row);
