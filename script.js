@@ -131,10 +131,11 @@ function addKeys(obj){
                     <p>Application</p>
                     <select onchange="hideMap(this)" id="application-`+i+`">
                       <option value="application" selected></option>
+                      <option>Household</option>
+                      <option>HighFlow</option>
                       <option>DeepWell</option>
                       <option>DewateringSewage</option>
-                      <option>SingleStagePressureBooster</option>
-                      <option>MultiStagePressureBooster</option>
+                      <option>MultiStage</option>
                       <option>Recirculation</option>
                     </select>
                     <p>Child Category</p>
@@ -150,6 +151,10 @@ function addKeys(obj){
                       <option>Vertical</option>
                       <option>Horizontal</option>
                       <option>Inline</option>
+                      <option>SplitCase</option>
+                      <option>Turbine</option>
+                      <option>Axial</option>
+                      <option>MixFlow</option>
                     </select>
                     <div class="key-selectors key-hidden hidden" id="motor-sku-`+i+`">
                       <p>Motor SKU</p>
@@ -569,11 +574,14 @@ function hideMap(obj){
         case "DewateringSewage":
           hideSelection(document.getElementById("child-category-" + elmId), ["Regular", "Grinder"]);
           break;
-        case "SingleStagePressureBooster":
+        case "Household":
           hideSelection(document.getElementById("child-category-" + elmId), ["JetShallow", "EndSuction", "Peripheral", "SelfPriming"]);
           break;
-        case "MultiStagePressureBooster":
+        case "MultiStage":
           hideSelection(document.getElementById("child-category-" + elmId), ["Vertical", "EndSuction", "Horizontal", "SelfPriming"]);
+          break;
+        case "HighFlow":
+          hideSelection(document.getElementById("child-category-" + elmId), ["EndSuction", "SplitCase", "Turbine", "Axial", "MixFlow"]);
           break;
         case "Recirculation":
           hideSelection(document.getElementById("child-category-" + elmId), ["Inline", "EndSuction"]);
@@ -593,12 +601,12 @@ function hideMap(obj){
           break;
         case "JetShallow":
         case "Peripheral":
-          hideSelection(document.getElementById("application-" + elmId), ["SingleStagePressureBooster"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Household"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "Vertical":
         case "Horizontal":
-          hideSelection(document.getElementById("application-" + elmId), ["MultiStagePressureBooster"]);
+          hideSelection(document.getElementById("application-" + elmId), ["MultiStage"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "Inline":
@@ -606,11 +614,18 @@ function hideMap(obj){
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "EndSuction":
-          hideSelection(document.getElementById("application-" + elmId), ["SingleStagePressureBooster", "MultiStagePressureBooster", "Recirculation"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Household", "MultiStage", "Recirculation", "HighFlow"]);
+          document.getElementById("motor-sku-" + elmId).classList.add("hidden");
+          break;
+        case "SplitCase":
+        case "Turbine":
+        case "Axial":
+        case "MixFlow":
+          hideSelection(document.getElementById("application-" + elmId), ["HighFlow"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "SelfPriming":
-          hideSelection(document.getElementById("application-" + elmId), ["SingleStagePressureBooster", "MultiStagePressureBooster"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Household", "MultiStage"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "DeepWell":
@@ -799,16 +814,16 @@ function generate(obj, add=false){
       key[7] = "EndSuction";
     } else if (cat[i].includes("Jet Pump") || name[i].includes("Jet Pump")){
       key[7] = "JetShallow";
-      key[6] = "SingleStagePressureBooster";
+      key[6] = "Household";
     } else if (cat[i].includes("Multi Stage") || name[i].includes("Multi Stage")){
-      key[6] = "MultiStagePressureBooster"
+      key[6] = "MultiStage"
     } else if (cat[i].includes("Grinder") || name[i].includes("Grinder")){
       key[7] = "Grinder";
       addMulti(key, 5, "Sewage", "water");
       key[6] = "DewateringSewage"
     } else if (cat[i].includes("Shallow") || name[i].includes("Shallow")){
       key[7] = "JetShallow";
-      key[6] = "SingleStagePressureBooster";
+      key[6] = "Household";
     }
 
     // SPECIAL CONDITIONS:
