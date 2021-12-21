@@ -292,11 +292,7 @@ function downloadKeys(obj){
   for (let i = 0; i < articles.length - 1; i++){
     var exId = document.getElementById("p-exId-" + i).innerHTML;
     var name = document.getElementById("p-name-" + i).value;
-    var sku = document.getElementById("p-sku-" + i).value;
-    var brand = document.getElementById("p-brand-" + i).innerHTML.split('&amp;').join('&');
-    var tags = document.getElementById("p-tags-" + i).innerHTML;
-    var cat = document.getElementById("p-cat-" + i).innerHTML;
-    var row = [exId, name, sku, brand, tags, cat];
+    var row = [exId, name];
     var desc = document.getElementById("p-desc-" + i).value;
     var key = getKey(articles[i]);
     row.push(desc + key);
@@ -381,6 +377,7 @@ function getKey(article){
 }
 
 function setKey(article, setKey, markCopy=false){
+  var artId = article.id;
   var sl = article.getElementsByTagName("SELECT");
   var ul = article.getElementsByTagName("UL");
   var ipt = article.getElementsByTagName("INPUT");
@@ -400,6 +397,17 @@ function setKey(article, setKey, markCopy=false){
   }
   if (setKey[6] != "DeepWell"){
     removeKeys(key, key, ["motor-sku"], false);
+  }
+
+  // sku and brand
+  if (!document.getElementById("p-sku-" + artId).value){
+    var i = key.indexOf("sku")
+    document.getElementById("p-sku-" + artId).value = setKey[i]
+  }
+
+  if (!document.getElementById("p-brand-" + artId).innerHTML){
+    var i = key.indexOf("brand")
+    document.getElementById("p-brand-" + artId).innerHTML = setKey[i]
   }
 
   // selects
@@ -527,7 +535,7 @@ function getArrayUnits(arr, unit){
 function getRange(val, unit){
   var range = [];
   for (i = 1; i < 6; i++){
-    range.push(val - i + unit);
+    range.push(Math.floor(val) - i + unit);
   }
   return range.join("");
 }
@@ -774,7 +782,6 @@ function generate(obj, add=false){
     key[9] = brand[i].split('&').join('').split(' ').join('');
 
     // Get Installation from category and name
-    // temp
     if (cat[i].includes("Submersible") || name[i].includes("Submersible") || name[i].includes("Cable")){
       key[3] = "Submersible";
     } else if (cat[i].includes("Engine") || name[i].includes("Engine") || name[i].includes("Surface")){
@@ -820,9 +827,14 @@ function generate(obj, add=false){
     } else if (cat[i].includes("Grinder") || name[i].includes("Grinder")){
       key[7] = "Grinder";
       addMulti(key, 5, "Sewage", "water");
-      key[6] = "DewateringSewage"
+      key[6] = "DewateringSewage";
+    } else if (key[6] == "DewateringSewage") {
+      key[7] = "Regular";
     } else if (cat[i].includes("Shallow") || name[i].includes("Shallow")){
       key[7] = "JetShallow";
+      key[6] = "Household";
+    } else if (name[i].includes("Self-Priming") || name[i].includes("Self Priming")){
+      key[7] = "SelfPriming";
       key[6] = "Household";
     }
 
