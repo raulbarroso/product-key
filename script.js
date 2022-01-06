@@ -135,7 +135,7 @@ function addKeys(obj){
                       <option>HighFlow</option>
                       <option>DeepWell</option>
                       <option>DewateringSewage</option>
-                      <option>MultiStage</option>
+                      <option>Multistage</option>
                       <option>Recirculation</option>
                     </select>
                     <p>Child Category</p>
@@ -585,7 +585,7 @@ function hideMap(obj){
         case "Household":
           hideSelection(document.getElementById("child-category-" + elmId), ["JetShallow", "EndSuction", "Peripheral", "SelfPriming"]);
           break;
-        case "MultiStage":
+        case "Multistage":
           hideSelection(document.getElementById("child-category-" + elmId), ["Vertical", "EndSuction", "Horizontal", "SelfPriming"]);
           break;
         case "HighFlow":
@@ -614,7 +614,7 @@ function hideMap(obj){
           break;
         case "Vertical":
         case "Horizontal":
-          hideSelection(document.getElementById("application-" + elmId), ["MultiStage"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Multistage"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "Inline":
@@ -622,7 +622,7 @@ function hideMap(obj){
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "EndSuction":
-          hideSelection(document.getElementById("application-" + elmId), ["Household", "MultiStage", "Recirculation", "HighFlow"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Household", "Multistage", "Recirculation", "HighFlow"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "SplitCase":
@@ -633,7 +633,7 @@ function hideMap(obj){
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "SelfPriming":
-          hideSelection(document.getElementById("application-" + elmId), ["Household", "MultiStage"]);
+          hideSelection(document.getElementById("application-" + elmId), ["Household", "Multistage"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "DeepWell":
@@ -809,7 +809,7 @@ function generate(obj, add=false){
     // get application from name or cat
     if (cat[i].includes("Deep Well") || name[i].includes("Deep Well")){
       key[6] = "DeepWell";
-      key[7] = "motor-sku";
+      key[7] = "DeepWell";
     } else if (cat[i].includes("Dewatering") || name[i].includes("Dewatering")){
       key[6] = "DewateringSewage";
     } else if (cat[i].includes("Sewage") || name[i].includes("Sewage")){
@@ -822,8 +822,8 @@ function generate(obj, add=false){
     } else if (cat[i].includes("Jet Pump") || name[i].includes("Jet Pump")){
       key[7] = "JetShallow";
       key[6] = "Household";
-    } else if (cat[i].includes("Multi Stage") || name[i].includes("Multi Stage")){
-      key[6] = "MultiStage"
+    } else if (cat[i].includes("Multi Stage") || name[i].includes("Multi Stage" || cat[i].includes("Multistage") || name[i].includes("Multistage")){
+      key[6] = "Multistage"
     } else if (cat[i].includes("Grinder") || name[i].includes("Grinder")){
       key[7] = "Grinder";
       addMulti(key, 5, "Sewage", "water");
