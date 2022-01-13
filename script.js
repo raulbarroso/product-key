@@ -972,7 +972,7 @@ function addMulti(key, i, str, empty){
   }
 }
 
-// returns of array of values for any given field
+// returns array of values for any given field
 function makeArr(field, table) {
   var col = table[0].indexOf(field); // Find index of field
   if (col == -1 && field == "External ID"){
