@@ -195,14 +195,14 @@ function addKeys(obj){
                         <option value="discharge-type" selected></option>
                         <option>Flanged</option>
                         <option>NPT</option>
-                        <option>Flanged/NPT</option>
+                        <option value="Flanged,NPT">Flanged/NPT</option>
                       </select>
                       <p>Phase</p>
                       <select>
                         <option value="phase" selected></option>
                         <option>1Phase</option>
                         <option>3Phase</option>
-                        <option>1Phase/3Phase</option>
+                        <option vale="1Phase,3Phase">1Phase/3Phase</option>
                       </select>
                       <p>Voltage</p>
                       <ul class="checkbox-voltage">
@@ -248,7 +248,7 @@ function addKeys(obj){
                           <option value="operation" selected></option>
                           <option>AutomaticOperation</option>
                           <option>ManualOperation</option>
-                          <option>AutomaticOperation/ManualOperation</option>
+                          <option value="AutomaticOperation,ManualOperation">AutomaticOperation/ManualOperation</option>
                         </select>
                         <div class="atts-nums">
                           <p>Cable</p>
