@@ -289,14 +289,18 @@ function removeCopy(elm){
 
 function downloadKeys(obj){
   var articles = document.getElementsByTagName("ARTICLE");
-  var newTable = [['External ID', 'Name', 'Internal Reference', 'Brand', 'Product Tags', 'Product Category', 'Sales Description']];
+  var newTable = [['External ID', 'Name', 'Internal Reference', 'Product Key', 'Brand', 'Product Tags', 'Product Category', 'Sales Description']];
   for (let i = 0; i < articles.length - 1; i++){
     var exId = document.getElementById("p-exId-" + i).innerHTML;
     var name = document.getElementById("p-name-" + i).value;
-    var row = [exId, name];
-    var desc = document.getElementById("p-desc-" + i).value;
+    var sku = document.getElementById("p-sku-" + i).value;
     var key = getKey(articles[i]);
-    row.push(desc + key);
+    var brand = document.getElementById("p-brand-" + i).innerHTML;
+    var tags = document.getElementById("p-tags-" + i).innerHTML;
+    var category = document.getElementById("p-cat-" + i).innerHTML;
+    var desc = document.getElementById("p-desc-" + i).value;
+
+    var row = [exId, name, sku, key, brand, tags, category, desc];
     newTable.push(row);
   }
   var filename = "ProductKeys.csv";
