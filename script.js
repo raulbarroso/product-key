@@ -75,6 +75,7 @@ function addKeys(obj){
   var desc = makeArr('Sales Description', table);
   var cat = makeArr('Product Category', table);
   var tags = makeArr('Product Tags', table);
+  var productKey = makeArr('Product Key', table);
 
   var max = name.length;
   var articleArr = [];
@@ -90,7 +91,7 @@ function addKeys(obj){
                       </div>
                       <div class="product-info desc-info">
                         <h2>Sales Description:</h2>
-                        <textarea id="p-desc-`+i+`">` + desc[i].split(":_:_")[0] + `</textarea>
+                        <textarea id="p-desc-`+i+`">` + desc[i] + `</textarea>
                       </div>
                       <div class="hidden">
                         <p id="p-exId-`+i+`">` + exId[i] + `</p>
@@ -203,7 +204,7 @@ function addKeys(obj){
                         <option value="phase" selected></option>
                         <option>1Phase</option>
                         <option>3Phase</option>
-                        <option vale="1Phase,3Phase">1Phase/3Phase</option>
+                        <option value="1Phase,3Phase">1Phase/3Phase</option>
                       </select>
                       <p>Voltage</p>
                       <ul class="checkbox-voltage">
@@ -274,7 +275,7 @@ function addKeys(obj){
 
   var articles = document.getElementsByTagName("ARTICLE");
   for (let i = 0; i < articles.length - 1; i++){
-    var key = ":_:_" + desc[i].split(":_:_")[1]
+    var key = productKey[i];
     setKey(articles[i], key);
   }
 
@@ -737,147 +738,168 @@ function generate(obj, add=false){
   var desc = makeArrSkip('Sales Description', table, skipArr);
   var cat = makeArrSkip('Product Category', table, skipArr);
   var brand = makeArrSkip('Brand', table, skipArr);
-  var tags = makeTagsArr('Product Tags', table, skipArr);
+  var tags = makeArrSkip('Product Tags', table, skipArr);
+  var productKey = makeArrSkip('Product Key', table, skipArr);
+  var attValues = makeArrSkip('Products/Attribute Values', table, skipArr);
   var markets = getMarkets(tags);
 
   var keyStr = ":_:_Pump_:_sku_:_installation_:_drive_:_water_:_application_:_child-category" +
                 "_:_market_:_brand_:_model_:_hp_:_discharge-size_:_discharge-type_:_phase" +
                 "_:_voltage_:_rpm_:_seal_:_mh_:_head-range_:_mf_:_flow-range_:_curve_:_att1_:_att2_:_att3_:_:";
 
+  var keyDict = {
+    ":": ":",
+    "product": "Pump",
+    "sku": "",
+    "installation": "installation",
+    "drive": "drive",
+    "water": "water",
+    "application": "application",
+    "child-category": "child-category",
+    "market": "market",
+    "brand": "brand",
+    "model": "model",
+    "hp": "hp",
+    "discharge-size": "discharge-size",
+    "discharge-type": "discharge-type",
+    "phase": "phase",
+    "voltage": "voltage",
+    "rpm": "rpm",
+    "seal": "seal",
+    "mh": "mh",
+    "head-range": "head-range",
+    "mf": "mf",
+    "flow-range": "flow-range",
+    "curve": "curve"
+  }
+
   // Create new temp table
   // the first row of the new table, two columns
-  var newTable = [['External ID', 'Name', 'Internal Reference', 'Brand', 'Product Tags', 'Product Category', 'Sales Description']];
+  var newTable = [['External ID', 'Name', 'Internal Reference', 'Brand', 'Product Tags', 'Product Category', 'Sales Description', 'Product Key']];
   for (let i = 0; i < exId.length; i++){
-    var row = [exId[i],name[i],sku[i],brand[i],tags[i],cat[i]];
-    if (desc[i].split(":_:_").length > 1){
-      row.push(desc[i]);
+    var row = [exId[i],name[i],sku[i],brand[i],tags[i],cat[i], desc[i]];
+    if (productKey[i] != "" && productKey[i] != null){
+      row.push(productKey[i]);
       newTable.push(row);
       continue;
     }
-    var key = keyStr.split('_:_');
+    var key = keyDict;
     // SKU
-    key[2] = sku[i];
+    key["sku"] = sku[i];
     // Markets
     if (markets[i] != null){
-      key[8] = markets[i].join(',').split('&').join('').split(' ').join('');
+      key["market"] = markets[i].join(',').split('&').join('').split(' ').join('');
     }
     // Brand
-    key[9] = brand[i].split('&').join('').split(' ').join('');
+    key["brand"] = brand[i].split('&').join('').split(' ').join('');
 
     // Get Installation from category and name
     if (cat[i].includes("Submersible") || name[i].includes("Submersible") || name[i].includes("Cable")){
-      key[3] = "Submersible";
+      key["installation"] = "Submersible";
     } else if (cat[i].includes("Engine") || name[i].includes("Engine") || name[i].includes("Surface")){
-      key[3] = "Surface";
+      key["installation"] = "Surface";
     }
 
     // Get drive from category or installation
     if (cat[i].includes("Pump End")){
-      key[4] = "PumpEnd";
+      key["drive"] = "PumpEnd";
     } else if (cat[i].includes("Submersible")){
-      key[4] = "Electric";
+      key["drive"] = "Electric";
     }
 
     // Get Water from cat or Name
     if (cat[i].includes("Trash") || name[i].includes("Trash")){
-      addMulti(key, 5, "Trash", "water");
+      addMulti(key, "water", "Trash");
     }
     if (cat[i].includes("Effluent") || name[i].includes("Effluent")){
-      addMulti(key, 5, "Effluent", "water");
+      addMulti(key, "water", "Effluent");
     }
     if (cat[i].includes("Sewage") || name[i].includes("Sewage")){
-      addMulti(key, 5, "Sewage", "water");
+      addMulti(key, "water", "Sewage");
     }
 
     // get application from name or cat
     if (cat[i].includes("Deep Well") || name[i].includes("Deep Well")){
-      key[6] = "DeepWell";
-      key[7] = "DeepWell";
+      key["application"] = "DeepWell";
     } else if (cat[i].includes("Dewatering") || name[i].includes("Dewatering")){
-      key[6] = "DewateringSewage";
+      key["application"] = "DewateringSewage";
     } else if (cat[i].includes("Sewage") || name[i].includes("Sewage")){
-      key[6] = "DewateringSewage";
+      key["application"] = "DewateringSewage";
     }
 
     // Get child cat from category or name
     if (cat[i].includes("End Suction") || name[i].includes("End Suction")){
-      key[7] = "EndSuction";
+      key["child-category"] = "EndSuction";
     } else if (cat[i].includes("Jet Pump") || name[i].includes("Jet Pump")){
-      key[7] = "JetShallow";
-      key[6] = "Household";
+      key["child-category"] = "JetShallow";
+      key["application"] = "Household";
     } else if (cat[i].includes("Multi Stage") || name[i].includes("Multi Stage") || cat[i].includes("Multistage") || name[i].includes("Multistage")){
-      key[6] = "Multistage"
+      key["application"] = "Multistage"
     } else if (cat[i].includes("Grinder") || name[i].includes("Grinder")){
-      key[7] = "Grinder";
+      key["child-category"] = "Grinder";
       addMulti(key, 5, "Sewage", "water");
-      key[6] = "DewateringSewage";
-    } else if (key[6] == "DewateringSewage") {
-      key[7] = "Regular";
+      key["application"] = "DewateringSewage";
+    } else if (key["application"] == "DewateringSewage") {
+      key["child-category"] = "Regular";
     } else if (cat[i].includes("Shallow") || name[i].includes("Shallow")){
-      key[7] = "JetShallow";
-      key[6] = "Household";
+      key["child-category"] = "JetShallow";
+      key["application"] = "Household";
     } else if (name[i].includes("Self-Priming") || name[i].includes("Self Priming")){
-      key[7] = "SelfPriming";
-      key[6] = "Household";
+      key["child-category"] = "SelfPriming";
+      key["application"] = "Household";
     }
 
     // SPECIAL CONDITIONS:
     if (true){
       // by market
-      if (key[8].includes("Agriculture")){
-        if (key[6].includes("DeepWell")){
-          key[3] = "Submersible";
-          addMulti(key, 5, "Clear", "water");
+      if (key["market"].includes("Agriculture")){
+        if (key["application"].includes("DeepWell")){
+          key["installation"] = "Submersible";
+          addMulti(key, "water", "Clear");
+        }
+      }
+      if (key["market"].includes("HVAC")){
+        key["installation"] = "Surface";
+        addMulti(key, "water", "Clear");
+      }
+      if (key["market"].includes("Construction")) {
+        if (key["brand"].includes("Zoeller")){
+          key["installation"] = "Submersible";
+        } else if (!key["brand"].includes("Tsurumi")){
+          key["installation"] = "Surface";
+        }
+      }
+      if (key["market"].includes("Mining")) {
+        addMulti(key, "water", "Effluent");
+      }
+      if (key["market"].includes("Potable")) {
+        addMulti(key, "water", "Clear");
+        if (key["application"].includes("DeepWell")){
+          key["installation"] = "Submersible";
         } else {
-          addMulti(key, 3, "Surface", "water"); //temp
+          key["installation"] = "Surface";
         }
       }
-      if (key[8].includes("HVAC")){
-        key[3] = "Surface";
-        addMulti(key, 5, "Clear", "water");
-      }
-      if (key[8].includes("Construction")) {
-        if (key[9].includes("Zoeller")){
-          key[3] = "Submersible";
-        } else if (!key[9].includes("Tsurumi")){
-          key[3] = "Surface";
-        }
-      }
-      if (key[8].includes("Mining")) {
-        addMulti(key, 5, "Effluent", "water");
-      }
-      if (key[8].includes("Potable")) {
-        addMulti(key, 5, "Clear", "water");
-        if (key[6].includes("DeepWell")){
-          key[3] = "Submersible";
-        } else {
-          key[3] = "Surface";
-        }
-      }
-      if (key[8].includes("Wastewater")){
-        key[3] = "Submersible";
+      if (key["market"].includes("Wastewater")){
+        key["installation"] = "Submersible";
       }
       // by brand
-      if (key[9].includes("Cornell")){
-        key[3] = "Surface";
-      } else if (key[9].includes("Flint") && key[3] == "Surface"){
-        addMulti(key, 5, "Clear", "water");
-      } else if (key[9].includes("Zoeller")){
-        key[3] = "Submersible";
+      if (key["brand"].includes("Cornell")){
+        key["installation"] = "Surface";
+      } else if (key["brand"].includes("Flint") && key["installation"] == "Surface"){
+        addMulti(key, "water", "Clear");
+      } else if (key["brand"].includes("Zoeller")){
+        key["installation"] = "Submersible";
       }
     }
 
     // Get additional atts from Installation
-    if (key[3] == "Submersible"){
-      key[23] = "motor-protection";
-      key[24] = "handling";
-      key[25] = "cable";
-    } else if (key[3] == "Surface"){
-      key[23] = "suction";
-      key.pop();
-      key.pop();
-      key.pop();
-      key.push(':');
+    if (key["installation"] == "Submersible"){
+      key["motor-protection"] = "motor-protection";
+      key["operation"] = "operation";
+      key["cable"] = "cable";
+    } else if (key["installation"] == "Surface"){
+      key["suction"] = "suction";
     }
 
     // guesses values
@@ -900,7 +922,7 @@ function generate(obj, add=false){
           } else {
             var value = parseFloat(numb);
           }
-          key[11] = value + "HP";
+          key["hp"] = value + "HP";
         }
         // Find discharge
         var matches = nameArr[j].match(/\"|in\./ig);
@@ -910,27 +932,77 @@ function generate(obj, add=false){
           } else {
             numb = nameArr[j-1];
           }
-          key[12] = parseFloat(numb) + "Discharge";
+          key["discharge-size"] = parseFloat(numb) + "Discharge";
         }
         // Find voltage
         switch(nameArr[j]){
           case "115V":
-            key[15] = "115V";
+            key["voltage"] = "115V";
             break;
           case "230V":
-            key[15] = "230V";
+            key["voltage"] = "230V";
             break;
           case "208-230V":
-            key[15] = "208-230V";
+            key["voltage"] = "208-230V";
             break;
           case "460V":
-            key[15] = "460V";
+            key["voltage"] = "460V";
         }
       }
     }
-    
-    desc[i] += '\n' + key.join('_:_').split('_:__:_').join('_:_null_:_');
-    row.push(desc[i]);
+
+    // variants 
+    if (key["sku"] == ""){
+      // operation
+      if (attValues[i].includes(": Automatic")){
+        addMulti(key, "operation", "AutomaticOperation");
+      }
+      if (attValues[i].includes("Non-Automatic")){
+        addMulti(key, "operation", "ManualOperation");
+      }
+      // phase
+      if (attValues[i].includes("Single Phase")){
+        addMulti(key, "phase", "1Phase");
+      }
+      if (attValues[i].includes("Three Phase")){
+        addMulti(key, "phase", "3Phase");
+      }
+      // voltage
+      if (attValues[i].includes("Voltage: 115")){
+        addMulti(key, "voltage", "115V");
+      }
+      if (attValues[i].includes("Voltage: 230")){
+        addMulti(key, "voltage", "320V");
+      }
+      if (attValues[i].includes("Voltage: 208-230")){
+        addMulti(key, "voltage", "208-230V");
+      }
+      if (attValues[i].includes("Voltage: 460")){
+        addMulti(key, "voltage", "460V");
+      }
+      // seal
+      if (attValues[i].includes("Seal: Single")){
+        addMulti(key, "seal", "1Seal");
+      }
+      if (attValues[i].includes("Seal: Double")){
+        addMulti(key, "seal", "2Seal");
+      }
+      if (attValues[i].includes("Seal: Packing Seal")){
+        addMulti(key, "seal", "PackingSeal");
+      }
+      // discharge type
+      if (attValues[i].includes("Flanged")){
+        addMulti(key, "discharge-type", "Flanged");
+      }
+      if (attValues[i].includes("NPT")){
+        addMulti(key, "discharge-type", "NPT");
+      }
+    }
+    // turn key dict into array
+    var keyArr = Object.values(key);
+    keyArr.push(":");
+    productKey[i] = keyArr.join('_:_');
+    row.push(productKey[i]);
     newTable.push(row);
   }
   if (add) {
@@ -947,11 +1019,13 @@ function divideStr(str) {
   return parseInt(vals[0]) / parseInt(vals[1])
 }
 
-function addMulti(key, i, str, empty){
-  if (key[i] == empty){
-    key[i] = str;
-  } else if (!key[i].includes(str)) {
-    key[i] += ',' + str;
+function addMulti(key, name, str){
+  if (key.hasOwnProperty(name)){
+    if (key[name] == name){
+      key[name] = str;
+    } else if (!key[name].includes(str)) {
+      key[name] += ',' + str;
+    }
   }
 }
 
@@ -972,28 +1046,10 @@ function makeArr(field, table) {
   return valArr;
 }
 
-// returns of array of values for any given field skipping fields
-function makeArrSkip(field, table, skip) {
-  var col = table[0].indexOf(field); // Find index of field
-  if (col == -1 && field == "External ID"){
-    var col = table[0].indexOf("ID");
-  }
-  var valArr = [];
-  for (i = 1; i < table.length; i++) {
-    if (!skip[i - 1]){
-      if (table[i][col] != null){
-        valArr.push(table[i][col]);
-      } else {
-        valArr.push("");
-      }
-    }
-  }
-  return valArr;
-}
-
-function makeSkipArr(field, table, skip) {
-  var col = table[0].indexOf(field); // Find index of field
-  if (col == -1 && field == "External ID"){
+// makes arr of bools indicating skip
+function makeSkipArr(field, table) {
+  var col = table[0].indexOf(field);
+  if (col == -1 && field == "External ID"){ // corrects for odoo ID bug
     var col = table[0].indexOf("ID");
   }
   var skipArr = [];
@@ -1007,8 +1063,13 @@ function makeSkipArr(field, table, skip) {
   return skipArr;
 }
 
-function makeTagsArr(field, table, skip) {
-  var col = table[0].indexOf(field); // Find index of field
+// returns array of values for any given field skipping fields
+function makeArrSkip(field, table, skip, sep=",") {
+  var col = table[0].indexOf(field);
+  if (col == -1 && field == "External ID"){ // corrects for odoo ID bug
+    var col = table[0].indexOf("ID");
+  }
+
   var valArr = [];
   for (i = 1; i < table.length; i++) {
     if (!skip[i - 1]){
@@ -1017,8 +1078,8 @@ function makeTagsArr(field, table, skip) {
       } else {
         valArr.push("");
       }
-    } else {
-      valArr[valArr.length - 1] = [valArr[valArr.length - 1],table[i][col]].join(",");
+    } else if (table[i][col] != null && table[i][col] != ''){
+      valArr[valArr.length - 1] = [valArr[valArr.length - 1],table[i][col]].join(sep);
     }
   }
   return valArr;
