@@ -132,31 +132,26 @@ function addKeys(obj){
                     <p>Application</p>
                     <select onchange="hideMap(this)" id="application-`+i+`">
                       <option value="application" selected></option>
-                      <option>Household</option>
-                      <option>HighFlow</option>
-                      <option>DeepWell</option>
-                      <option>DewateringSewage</option>
-                      <option>Multistage</option>
-                      <option>Irrigation</option>
-                      <option>Recirculation</option>
+                      <option>ResidentialPumps</option>
+                      <option>SubmersiblePumps</option>
                     </select>
                     <p>Child Category</p>
                     <select onchange="hideMap(this)" id="child-category-`+i+`">
                       <option value="child-category" selected></option>
+                      <option>EndSuctionPumps</option>
+                      <option>EngineDrivenPumps</option>
+                      <option>PressureBoosterPumps</option>
+                      <option>JetPumps</option>
+                      <option>PeripheralPumps</option>
+                      <option>MultiStage</option>
+                      <option>SmartPumps</option>
                       <option>DeepWell</option>
-                      <option>Regular</option>
-                      <option>Grinder</option>
-                      <option>JetShallow</option>
-                      <option>Peripheral</option>
-                      <option>EndSuction</option>
-                      <option>SelfPriming</option>
-                      <option>Vertical</option>
-                      <option>Horizontal</option>
-                      <option>Inline</option>
-                      <option>SplitCase</option>
+                      <option>Dewatering</option>
+                      <option>Effluent</option>
+                      <option>Sewage</option>
+                      <option>Slurry</option>
+                      <option>Trash</option>
                       <option>Turbine</option>
-                      <option>Axial</option>
-                      <option>MixFlow</option>
                     </select>
                     <div class="key-selectors key-hidden hidden" id="motor-sku-`+i+`">
                       <p>Motor SKU</p>
@@ -556,6 +551,7 @@ function setValueSelect(select, val){
   }
 }
 
+
 function hideMap(obj){
   var select = obj.id.split("-")
   var elmId = select.pop();
@@ -581,15 +577,11 @@ function hideMap(obj){
         case "application":
           hideSelection(document.getElementById("child-category-" + elmId), [], true);
           break;
-        case "DeepWell":
-          hideSelection(document.getElementById("child-category-" + elmId), ["DeepWell"]);
-          document.getElementById("motor-sku-" + elmId).classList.remove("hidden");
+        case "ResidentialPumps":
+          hideSelection(document.getElementById("child-category-" + elmId), ["JetPumps", "PeripheralPumps", "MultiStage", "SmartPumps"]);
           break;
-        case "HighFlow":
-          hideSelection(document.getElementById("child-category-" + elmId), ["EndSuction", "SplitCase", "Turbine", "Axial", "MixFlow"]);
-          break;
-        case "Recirculation":
-          hideSelection(document.getElementById("child-category-" + elmId), ["Inline", "EndSuction"]);
+        case "SubmersiblePumps":
+          hideSelection(document.getElementById("child-category-" + elmId), ["DeepWell", "Dewatering", "Effluent", "Sewage", "Slurry", "Trash", "Turbine"]);
           break;
       }
       break;
@@ -599,65 +591,33 @@ function hideMap(obj){
           hideSelection(document.getElementById("application-" + elmId), [], true);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
-        case "Regular":
-        case "Grinder":
-          hideSelection(document.getElementById("application-" + elmId), ["DewateringSewage"]);
+        case "JetPumps":
+        case "PeripheralPumps":
+        case "MultiStage":
+        case "SmartPumps":
+          hideSelection(document.getElementById("application-" + elmId), ["ResidentialPumps"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
-        case "JetShallow":
-        case "Peripheral":
-          hideSelection(document.getElementById("application-" + elmId), ["Household"]);
-          document.getElementById("motor-sku-" + elmId).classList.add("hidden");
-          break;
-        case "Inline":
-          hideSelection(document.getElementById("application-" + elmId), ["Recirculation"]);
-          document.getElementById("motor-sku-" + elmId).classList.add("hidden");
-          break;
-        case "SplitCase":
+        case "Dewatering":
+        case "Effluent":
+        case "Sewage":
+        case "Slurry":
+        case "Trash":
         case "Turbine":
-        case "Axial":
-        case "MixFlow":
-          hideSelection(document.getElementById("application-" + elmId), ["HighFlow"]);
+          hideSelection(document.getElementById("application-" + elmId), ["SubmersiblePumps"]);
           document.getElementById("motor-sku-" + elmId).classList.add("hidden");
           break;
         case "DeepWell":
-          hideSelection(document.getElementById("application-" + elmId), ["DeepWell"]);
+          hideSelection(document.getElementById("application-" + elmId), ["SubmersiblePumps"]);
           document.getElementById("motor-sku-" + elmId).classList.remove("hidden");
           break;
       }
       break;
-    case "phase":
-      switch(obj.value){
-        case "phase":
-          hideSelection(document.getElementById("voltage-" + elmId), [], true);
-          break;
-        case "1Phase":
-          hideSelection(document.getElementById("voltage-" + elmId), ["115V", "230V", "115V/230V"]);
-          break;
-        case "3Phase":
-          hideSelection(document.getElementById("voltage-" + elmId), ["208-230V", "460V", "208-230V/460V"]);
-          break;
-      }
-      break;
-    case "voltage":
-      switch(obj.value){
-        case "voltage":
-          hideSelection(document.getElementById("phase-" + elmId), [], true);
-          break;
-        case "115V":
-        case "230V":
-        case "115V/230V":
-          hideSelection(document.getElementById("phase-" + elmId), ["1Phase"]);
-          break;
-        case "208-230V":
-        case "460V":
-        case "208-230V/460V":
-          hideSelection(document.getElementById("phase-" + elmId), ["3Phase"]);
-          break;
-      }
   }
 }
 
+
+// hide selection; if all=true unhide all
 function hideSelection(obj, arr, all=false){
   var options = obj.getElementsByTagName("OPTION");
   for (let i = 1; i < options.length; i++){
@@ -777,13 +737,13 @@ function generate(obj, add=false){
   // the first row of the new table, two columns
   var newTable = [['External ID', 'Name', 'Internal Reference', 'Brand', 'Product Tags', 'Product Category', 'Sales Description', 'Product Key']];
   for (let i = 0; i < exId.length; i++){
-    var row = [exId[i],name[i],sku[i],brand[i],tags[i],cat[i], desc[i]];
+    var row = [exId[i],name[i],sku[i],brand[i],tags[i],cat[i],desc[i]];
     if (productKey[i] != "" && productKey[i] != null){
       row.push(productKey[i]);
       newTable.push(row);
       continue;
     }
-    var key = keyDict;
+    var key = {...keyDict};
     // SKU
     key["sku"] = sku[i];
     // Markets
@@ -818,42 +778,25 @@ function generate(obj, add=false){
       addMulti(key, "water", "Sewage");
     }
 
-    // get application from name or cat
-    if (cat[i].includes("Deep Well") || name[i].includes("Deep Well")){
-      key["application"] = "DeepWell";
-    } else if (cat[i].includes("Dewatering") || name[i].includes("Dewatering")){
-      key["application"] = "DewateringSewage";
-    } else if (cat[i].includes("Sewage") || name[i].includes("Sewage")){
-      key["application"] = "DewateringSewage";
+    // get application from category
+    if (cat[i].includes("Residential Pumps")){
+      key["application"] = "ResidentialPumps";
+    } else if (cat[i].includes("Submersible Pumps")){
+      key["application"] = "SubmersiblePumps";
     }
 
-    // Get child cat from category or name
-    if (cat[i].includes("End Suction") || name[i].includes("End Suction")){
-      key["child-category"] = "EndSuction";
-    } else if (cat[i].includes("Jet Pump") || name[i].includes("Jet Pump")){
-      key["child-category"] = "JetShallow";
-      key["application"] = "Household";
-    } else if (cat[i].includes("Multi Stage") || name[i].includes("Multi Stage") || cat[i].includes("Multistage") || name[i].includes("Multistage")){
-      key["application"] = "Multistage"
-    } else if (cat[i].includes("Grinder") || name[i].includes("Grinder")){
-      key["child-category"] = "Grinder";
-      addMulti(key, 5, "Sewage", "water");
-      key["application"] = "DewateringSewage";
-    } else if (key["application"] == "DewateringSewage") {
-      key["child-category"] = "Regular";
-    } else if (cat[i].includes("Shallow") || name[i].includes("Shallow")){
-      key["child-category"] = "JetShallow";
-      key["application"] = "Household";
-    } else if (name[i].includes("Self-Priming") || name[i].includes("Self Priming")){
-      key["child-category"] = "SelfPriming";
-      key["application"] = "Household";
+    // Get child cat from category 
+    if (cat[i].split(" / ").length == 1){
+      key["child-category"] = cat[i].split(" ").join("");
+    } else if (cat[i].split(" / ").length == 2){
+      key["child-category"] = cat[i].split(" / ")[1].split(" ").join("");
     }
 
     // SPECIAL CONDITIONS:
     if (true){
       // by market
       if (key["market"].includes("Agriculture")){
-        if (key["application"].includes("DeepWell")){
+        if (key["child-category"].includes("DeepWell")){
           key["installation"] = "Submersible";
           addMulti(key, "water", "Clear");
         }
@@ -874,7 +817,7 @@ function generate(obj, add=false){
       }
       if (key["market"].includes("Potable")) {
         addMulti(key, "water", "Clear");
-        if (key["application"].includes("DeepWell")){
+        if (key["child-category"].includes("DeepWell")){
           key["installation"] = "Submersible";
         } else {
           key["installation"] = "Surface";
